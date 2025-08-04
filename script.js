@@ -1,10 +1,18 @@
+import { questions } from "./questions.js";
+
 const startButton = document.getElementById("start-btn");
 const nextButton = document.getElementById("next-btn");
 const questionContainerElement = document.getElementById("question-container");
 const questionElement = document.getElementById("question");
 const answerButtonsElement = document.getElementById("answer-buttons");
+const endScreen = document.getElementById("end-screen");
+const endMessage = document.getElementById("end-message");
+const restartButton = document.getElementById("restart-btn");
+const questionCounterElement = document.getElementById("question-counter");
+const startContainer = document.getElementById("start-container");
 
 let shuffledQuestions, currentQuestionIndex;
+let score = 0;
 
 startButton.addEventListener("click", startGame);
 nextButton.addEventListener("click", () => {
@@ -26,7 +34,12 @@ function setNextQuestion() {
 }
 
 function showQuestion(question) {
+  resetState();
   questionElement.innerText = question.question;
+  questionCounterElement.innerText = `Question ${currentQuestionIndex + 1} of ${
+    questions.length
+  }`;
+  questionCounterElement.classList.remove("hide");
   question.answers.forEach((answer) => {
     const button = document.createElement("button");
     button.innerText = answer.text;
@@ -49,16 +62,20 @@ function resetState() {
 
 function selectAnswer(e) {
   const selectedButton = e.target;
-  const correct = selectedButton.dataset.correct;
+  const correct = selectedButton.dataset.correct === "true";
+
   setStatusClass(document.body, correct);
   Array.from(answerButtonsElement.children).forEach((button) => {
-    setStatusClass(button, button.dataset.correct);
+    setStatusClass(button, button.dataset.correct === "true");
+    button.disabled = true;
   });
+
+  if (correct) score++;
+
   if (shuffledQuestions.length > currentQuestionIndex + 1) {
     nextButton.classList.remove("hide");
   } else {
-    startButton.innerText = "Restart";
-    startButton.classList.remove("hide");
+    showEndScreen();
   }
 }
 
@@ -76,37 +93,24 @@ function clearStatusClass(element) {
   element.classList.remove("wrong");
 }
 
-const questions = [
-  {
-    question: "What is 2 + 2?",
-    answers: [
-      { text: "4", correct: true },
-      { text: "22", correct: false },
-    ],
-  },
-  {
-    question: "Who is the best YouTuber?",
-    answers: [
-      { text: "Web Dev Simplified", correct: true },
-      { text: "Traversy Media", correct: true },
-      { text: "Dev Ed", correct: true },
-      { text: "Fun Fun Function", correct: true },
-    ],
-  },
-  {
-    question: "Is web development fun?",
-    answers: [
-      { text: "Kinda", correct: false },
-      { text: "YES!!!", correct: true },
-      { text: "Um no", correct: false },
-      { text: "IDK", correct: false },
-    ],
-  },
-  {
-    question: "What is 4 * 2?",
-    answers: [
-      { text: "6", correct: false },
-      { text: "8", correct: true },
-    ],
-  },
-];
+function showEndScreen() {
+  questionContainerElement.classList.add("hide");
+  nextButton.classList.add("hide");
+  endScreen.classList.remove("hide");
+  endMessage.innerText = `Your Score: ${score} / ${shuffledQuestions.length}`;
+}
+
+restartButton.addEventListener("click", restartGame);
+function restartGame() {
+  score = 0;
+  currentQuestionIndex = 0;
+  endScreen.classList.add("hide");
+  questionContainerElement.classList.add("hide");
+  answerButtonsElement.innerHTML = "";
+  questionCounterElement.classList.add("hide");
+  startButton.classList.remove("hide");
+  startContainer.classList.remove("hide");
+  nextButton.classList.add("hide");
+
+  clearStatusClass(document.body);
+}

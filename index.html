@@ -8,7 +8,11 @@
   </head>
   <body>
     <div class="container">
+      <div id="start-container">
+        <button id="start-btn" class="start-btn btn">Start</button>
+      </div>
       <div id="question-container" class="hide">
+        <div id="question-counter" class="hide">Question 1 of 8</div>
         <div id="question">Question</div>
         <div id="answer-buttons" class="btn-grid">
           <button class="btn">Answer 1</button>
@@ -17,11 +21,14 @@
           <button class="btn">Answer 4</button>
         </div>
       </div>
+      <div id="end-screen" class="hide">
+        <h2 id="end-message">Your Score: 0/0</h2>
+        <button id="restart-btn" class="btn">Restart</button>
+      </div>
       <div class="controls">
-        <button id="start-btn" class="start-btn btn">Start</button>
         <button id="next-btn" class="next-btn btn hide">Next</button>
       </div>
     </div>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
   </body>
 </html>
